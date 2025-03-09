@@ -1,0 +1,9 @@
+requests
+psutil
+pystray
+pillow
+pynvml
+pyadl
+pyinstaller
+py-cpuinfo
+tkinter
