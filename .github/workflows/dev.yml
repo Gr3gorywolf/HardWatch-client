@@ -32,12 +32,10 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-                pyinstaller --onefile --icon=icon.ico --add-data "icon.ico;." --add-data "~config.json;." client.py
-                else
-                pyinstaller --onefile --icon=icon.ico --add-data "icon.ico:." --add-data "~config.json:." client.py
-                fi
+         bash build.sh
         shell: bash
+
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
