@@ -82,12 +82,12 @@ def get_system_info():
                 gpu_usage = pyadl.get_gpu_usage()
                 gpu_name = "AMD GPU"
                 gpu_model = "AMD GPU"
-            except ImportError:
+            except:
                 try:
                     gpu_usage = 0
                     gpu_name = "Intel GPU"
                     gpu_model = "Intel GPU"
-                except ImportError:
+                except:
                     pass
 
         # Get CPU temperature
@@ -96,7 +96,7 @@ def get_system_info():
             temps = psutil.sensors_temperatures()
             if "coretemp" in temps:
                 cpu_temp = sum(t.current for t in temps["coretemp"]) / len(temps["coretemp"])
-        except AttributeError:
+        except:
             pass
 
         # Format values
