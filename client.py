@@ -7,9 +7,7 @@ import threading
 import requests
 import psutil
 import platform
-from cpuinfo import get_cpu_info
-from pystray import Icon, MenuItem, Menu
-from PIL import Image
+from cpuinfo import get_cpu_info 
 
 try:
     from pynvml import nvmlInit, nvmlShutdown, nvmlDeviceGetHandleByIndex, nvmlDeviceGetUtilizationRates, nvmlDeviceGetTemperature, NVML_TEMPERATURE_GPU, nvmlDeviceGetName
@@ -155,11 +153,14 @@ def quit_app(icon, item):
 # Run threads
 thread = threading.Thread(target=send_stats, name="send_stats", daemon=True)
 thread.start()
-
-icon_image = Image.open("icon.ico")
-menu = Menu(MenuItem("Quit", quit_app))
-icon = Icon("System Monitor", icon_image, menu=menu)
-
-
-
-icon.run()
+try:
+    from pystray import Icon, MenuItem, Menu
+    from PIL import Image
+    icon_image = Image.open("icon.ico")
+    menu = Menu(MenuItem("Quit", quit_app))
+    icon = Icon("System Monitor", icon_image, menu=menu)
+    icon.run()
+except:
+    pass
+while True:
+    time.sleep(1)
