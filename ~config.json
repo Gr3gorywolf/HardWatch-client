@@ -1,0 +1,11 @@
+{
+    "name":"<Device alias>",
+    "appKey":"<Server app key>",
+    "backendUrl":"<Server URL>",
+    "actionables":[
+        {
+            "name":"<Actionable name>",
+            "action":"<Actionable command>"
+        }
+    ]
+}
