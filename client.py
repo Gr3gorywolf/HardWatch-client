@@ -15,8 +15,9 @@ try:
     from pynvml import nvmlInit, nvmlShutdown, nvmlDeviceGetHandleByIndex, nvmlDeviceGetUtilizationRates, nvmlDeviceGetTemperature, NVML_TEMPERATURE_GPU, nvmlDeviceGetName
     nvmlInit()
     NVIDIA_AVAILABLE = True
-except ImportError:
+except :
     NVIDIA_AVAILABLE = False
+    print("NVML no disponible en este entorno")
 
 multiprocessing.freeze_support()
 si = subprocess.STARTUPINFO()
