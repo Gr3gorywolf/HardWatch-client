@@ -152,12 +152,14 @@ def quit_app(icon, item):
     if NVIDIA_AVAILABLE:
         nvmlShutdown()
 
+# Run threads
+thread = threading.Thread(target=send_stats, name="send_stats", daemon=True)
+thread.start()
+
 icon_image = Image.open("icon.ico")
 menu = Menu(MenuItem("Quit", quit_app))
 icon = Icon("System Monitor", icon_image, menu=menu)
 
-# Run threads
-thread = threading.Thread(target=send_stats, name="send_stats", daemon=True)
-thread.start()
+
 
 icon.run()
