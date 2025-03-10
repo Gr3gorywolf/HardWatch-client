@@ -32,7 +32,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --windowed --icon=icon.ico main.py
+         build.sh
         shell: bash
 
       - name: Upload artifact
