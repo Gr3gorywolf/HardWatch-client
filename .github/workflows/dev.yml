@@ -32,7 +32,12 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-         bash build.sh
+         pyinstaller --onefile --icon=icon.ico client.py
+        shell: bash
+
+      - name: Move resources
+        run: |
+         mv ./icon.ico ./dist/icon.ico && mv ./~config.json ./dist/~config.json
         shell: bash
 
       - name: Upload artifact
