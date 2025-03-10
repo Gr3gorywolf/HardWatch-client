@@ -20,9 +20,6 @@ except :
     print("NVML no disponible en este entorno")
 
 multiprocessing.freeze_support()
-si = subprocess.STARTUPINFO()
-si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
 CONFIG_FILE = "config.json"
 ERROR_LOG = "errors-log.txt"
 
