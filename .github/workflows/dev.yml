@@ -32,7 +32,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-         build.sh
+         bash build.sh
         shell: bash
 
       - name: Upload artifact
