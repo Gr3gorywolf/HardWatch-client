@@ -6,4 +6,3 @@ pynvml
 pyadl
 pyinstaller
 py-cpuinfo
-tkinter
