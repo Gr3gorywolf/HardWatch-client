@@ -7,7 +7,6 @@ pyadl
 pyinstaller
 setuptools
 wheel
-symbol
 py-cpuinfo
 socketio
 socketio-client
