@@ -5,7 +5,10 @@ pillow
 pynvml
 pyadl
 pyinstaller
+setuptools
+wheel
 py-cpuinfo
+python-socketio
 socketio
 socketio-client
 websocket-client
