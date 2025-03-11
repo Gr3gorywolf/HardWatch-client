@@ -6,5 +6,6 @@ pynvml
 pyadl
 pyinstaller
 py-cpuinfo
+socketio
 socketio-client
 websocket-client
