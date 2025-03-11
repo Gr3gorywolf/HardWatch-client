@@ -2,13 +2,14 @@ import multiprocessing
 import os
 import json
 import subprocess
+import socketio
 import time
 import threading
 import requests
 import psutil
 import platform
 from cpuinfo import get_cpu_info 
-
+sio = socketio.Client()
 try:
     from pynvml import nvmlInit, nvmlShutdown, nvmlDeviceGetHandleByIndex, nvmlDeviceGetUtilizationRates, nvmlDeviceGetTemperature, NVML_TEMPERATURE_GPU, nvmlDeviceGetName
     nvmlInit()
@@ -30,12 +31,15 @@ DEVICE_NAME = config["name"]
 BACKEND_URL = config["backendUrl"]
 ACTIONABLES = config["actionables"]
 
+
+
 # Helper function to format storage
 def format_storage(value_gb):
     """Format storage values, converting to TB if >= 1000GB"""
     if value_gb >= 1000:
         return f"{value_gb / 1000:.1f}TB"
     return f"{value_gb}GB"
+
 
 # Get system info function
 def get_system_info():
@@ -130,8 +134,9 @@ def send_stats():
             system_info = get_system_info()
             if system_info:
                 payload = {
-                    "name": f"{DEVICE_NAME} - {platform.system()}",
+                    "name": DEVICE_NAME,
                     **system_info,
+                    "platform": platform.system(),
                     "actionables": ACTIONABLES
                 }
                 print("Sending data...", payload)
@@ -144,6 +149,39 @@ def send_stats():
                 log.write(f"{time.ctime()} - {str(e)}\n")
         time.sleep(3)
 
+
+## Socket IO setup
+@sio.event
+def connect():
+    print("Connected to server")
+
+@sio.event
+def disconnect():
+    print("Disconnected from server")
+
+@sio.on("execute-action")
+def handle_action(data):
+    action_name = data["action"]
+    print(f"Executing action: {action_name}")
+
+    # Buscar la acción en la lista de `actionables`
+    action_command = None
+    for item in ACTIONABLES:
+        if item["name"].lower() == action_name.lower():
+            action_command = item["action"]
+            break
+
+    if action_command:
+        print(f"Running command: {action_command}")
+        os.system(action_command)
+    else:
+        print(f"Action '{action_name}' not found in actionables")
+
+try:
+    sio.connect(BACKEND_URL, auth={"appKey": APP_KEY, "deviceName": DEVICE_NAME})
+except:
+    print("Error connecting to socket server")
+    pass
 # Tray icon setup
 def quit_app(icon, item):
     icon.stop()
@@ -161,6 +199,6 @@ try:
     icon = Icon("System Monitor", icon_image, menu=menu)
     icon.run()
 except:
+    while True:
+        time.sleep(1)
     pass
-while True:
-    time.sleep(1)
