@@ -4,8 +4,9 @@ def get_gpu_name():
     try:
         os_type = platform.system()
         if os_type == "Linux":
-                gpu_info = subprocess.check_output(["lspci", "|", "grep", "-i", "vga"], stderr=subprocess.STDOUT)
-                gpu_name = gpu_info.decode().split(":")[2].strip()  # Extrae el nombre de la GPU
+                output = subprocess.check_output(["lspci"], text=True, stderr=subprocess.STDOUT)
+                vga_lines = [line for line in output.splitlines() if "vga" in line.lower()]
+                gpu_name = vga_lines[0].split(":")[2].strip()  # Extrae el nombre de la GPUi
                 return gpu_name
 
         elif os_type == "Darwin":
