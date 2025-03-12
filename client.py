@@ -37,7 +37,6 @@ try:
     icon_image = Image.open("icon.ico")
     menu = Menu(MenuItem("Quit", quit_app))
     icon = Icon("System Monitor", icon_image, menu=menu)
-    icon.run()
 except:
     icon = None 
     pass
