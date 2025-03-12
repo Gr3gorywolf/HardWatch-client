@@ -31,6 +31,36 @@ DEVICE_NAME = config["name"]
 BACKEND_URL = config["backendUrl"]
 ACTIONABLES = config["actionables"]
 
+def get_gpu_name():
+    try:
+        os_type = platform.system()
+        if os_type == "Linux":
+                gpu_info = subprocess.check_output(["lspci", "|", "grep", "-i", "vga"], stderr=subprocess.STDOUT)
+                gpu_name = gpu_info.decode().split(":")[2].strip()  # Extrae el nombre de la GPU
+                return gpu_name
+
+        elif os_type == "Darwin":
+                gpu_info = subprocess.check_output(["system_profiler", "SPDisplaysDataType"], stderr=subprocess.STDOUT)
+                gpu_name = gpu_info.decode().split("Chipset Model:")[1].split("\n")[0].strip()
+                return gpu_name
+
+        elif os_type == "Windows":
+                gpu_info = subprocess.check_output(
+                    ["powershell", "-Command", "Get-WmiObject Win32_VideoController | Select-Object -ExpandProperty Caption"],
+                    stderr=subprocess.STDOUT
+                ).decode().strip()
+                return gpu_info
+
+        else:
+            return "Unknown GPU"
+    except:
+        return "Unknown GPU"
+
+
+cpu_info = get_cpu_info()
+CPU_NAME = cpu_info.get("brand_raw", "Unknown CPU")
+GPU_NAME = get_gpu_name()
+
 
 
 # Helper function to format storage
@@ -64,8 +94,8 @@ def get_system_info():
         # Get GPU info
         gpu_usage = 0
         gpu_temp = None
-        gpu_name = "Unknown GPU"
-        gpu_model = "Unknown Model"
+        gpu_name = GPU_NAME
+        gpu_model = GPU_NAME
 
         if NVIDIA_AVAILABLE:
             try:
@@ -77,21 +107,6 @@ def get_system_info():
             except Exception as e:
                 with open(ERROR_LOG, "a") as log:
                     log.write(f"{time.ctime()} - Error getting NVIDIA GPU data: {str(e)}\n")
-        else:
-            # AMD & Intel fallback
-            try:
-                import pyadl  # AMD
-                gpu_usage = pyadl.get_gpu_usage()
-                gpu_name = "AMD GPU"
-                gpu_model = "AMD GPU"
-            except:
-                try:
-                    gpu_usage = 0
-                    gpu_name = "Intel GPU"
-                    gpu_model = "Intel GPU"
-                except:
-                    pass
-
         # Get CPU temperature
         cpu_temp = None
         try:
@@ -102,16 +117,14 @@ def get_system_info():
             pass
 
         # Format values
-        cpu_info = get_cpu_info()
-        cpu_info = cpu_info.get("brand_raw", "Unknown CPU") + " " + f"{cpu_count}c/{cpu_threads}t"
+       
+        cpu_info = CPU_NAME  + " " + f"{cpu_count}c/{cpu_threads}t"
         ram_info = f"{format_storage(ram_used)} / {format_storage(ram_total)}"
         disk_info = f"{format_storage(disk_used)} / {format_storage(disk_total)}"
 
         return {
             "cpuUsage": cpu_usage,
             "gpuUsage": gpu_usage,
-            "gpuName": gpu_name,
-            "gpuModel": gpu_model,
             "ramUsage": ram_usage,
             "diskTotal": disk_usage,
             "os": platform.platform(),
