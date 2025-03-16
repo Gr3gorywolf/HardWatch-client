@@ -55,15 +55,15 @@ jobs:
         run: ls -R artifacts
       - name: Compress artifacts
         run: |
-          mkdir -p zipped_artifacts
-          for dir in artifacts/*/; do
-            if [ -d "$dir" ]; then
-              dir_name=$(basename "$dir")
-              # Empaquetar solo el contenido de la carpeta, no la carpeta misma
-              zip -r "zipped_artifacts/$dir_name.zip" -j "$dir"/*
-              echo "Created zipped_artifacts/$dir_name.zip"
-            fi
-          done
+             mkdir -p zipped_artifacts
+              for dir in artifacts/*/; do
+                if [ -d "$dir" ]; then
+                  dir_name=$(basename "$dir")
+                  cd "$dir"
+                  zip -r "../../zipped_artifacts/$dir_name.zip" *
+                  cd -  # Volver al directorio anterior
+                fi
+              done
       - uses: ncipollo/release-action@v1
         with:
             artifacts: "zipped_artifacts/*.zip"
