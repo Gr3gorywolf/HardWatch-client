@@ -59,7 +59,8 @@ jobs:
           for dir in artifacts/*/; do
             if [ -d "$dir" ]; then
               dir_name=$(basename "$dir")
-              zip -r "zipped_artifacts/$dir_name.zip" "$dir"
+              # Empaquetar solo el contenido de la carpeta, no la carpeta misma
+              zip -r "zipped_artifacts/$dir_name.zip" -j "$dir"/*
               echo "Created zipped_artifacts/$dir_name.zip"
             fi
           done
