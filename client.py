@@ -2,6 +2,7 @@ import multiprocessing
 import os
 import hashlib
 import json
+import webbrowser
 import psutil
 import socketio
 import time
@@ -34,11 +35,14 @@ DEVICE_ID = get_device_uuid() or hashlib.sha1((DEVICE_NAME + CPU_NAME).encode())
 def quit_app(icon, item):
     icon.stop()
 
+def open_dashboard():
+    webbrowser.open(BACKEND_URL + "/device/" + DEVICE_ID)
+
 try:
     from pystray import Icon, MenuItem, Menu
     from PIL import Image
     icon_image = Image.open("icon.ico")
-    menu = Menu(MenuItem("Quit", quit_app))
+    menu = Menu(MenuItem("Open dashboard", open_dashboard),MenuItem("Quit", quit_app))
     icon = Icon("System Monitor", icon_image, menu=menu)
 except:
     icon = None 
