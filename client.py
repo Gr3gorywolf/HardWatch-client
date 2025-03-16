@@ -1,5 +1,6 @@
 import multiprocessing
 import os
+import hashlib
 import json
 import psutil
 import socketio
@@ -28,7 +29,7 @@ ACTIONABLES = config["actionables"]
 cpu_info = get_cpu_info()
 CPU_NAME = cpu_info.get("brand_raw", "Unknown CPU")
 GPU_NAME = get_gpu_name()
-DEVICE_ID = get_device_uuid()
+DEVICE_ID = get_device_uuid() or hashlib.sha256(DEVICE_NAME + CPU_NAME).hexdigest()
 
 def quit_app(icon, item):
     icon.stop()
