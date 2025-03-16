@@ -53,7 +53,17 @@ jobs:
           path: artifacts
       - name: Debug artifacts
         run: ls -R artifacts
+      - name: Compress artifacts
+        run: |
+          mkdir -p zipped_artifacts
+          for dir in artifacts/*/; do
+            if [ -d "$dir" ]; then
+              dir_name=$(basename "$dir")
+              zip -r "zipped_artifacts/$dir_name.zip" "$dir"
+              echo "Created zipped_artifacts/$dir_name.zip"
+            fi
+          done
       - uses: ncipollo/release-action@v1
         with:
-            artifacts: "artifacts/**"
+            artifacts: "zipped_artifacts/*.zip"
             tag: v1.0.0-${{ github.run_number }}
