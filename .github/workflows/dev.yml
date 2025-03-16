@@ -51,7 +51,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+      - name: Debug artifacts
+        run: ls -R artifacts
       - uses: ncipollo/release-action@v1
         with:
-            artifacts: "multi-devices-monitor-client-*"
+            artifacts: "artifacts/**"
             tag: v1.0.0-${{ github.run_number }}
