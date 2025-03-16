@@ -3,7 +3,7 @@ import socketio
 
 
 sio = socketio.Client() 
-def start_socket_client(appKey, deviceName, backendUrl, actionables):
+def start_socket_client(appKey, deviceId, backendUrl, actionables):
     ## Socket IO setup
     @sio.event
     def connect():
@@ -32,7 +32,7 @@ def start_socket_client(appKey, deviceName, backendUrl, actionables):
             print(f"Action '{action_name}' not found in actionables")
 
     try:
-        sio.connect(backendUrl, auth={"appKey": appKey, "deviceName": deviceName})
+        sio.connect(backendUrl, auth={"appKey": appKey, "id": deviceId})
     except:
         print("Error connecting to socket server")
         pass

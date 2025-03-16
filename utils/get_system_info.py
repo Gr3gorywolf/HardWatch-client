@@ -15,6 +15,26 @@ def format_storage(value_gb):
         return f"{value_gb / 1000:.1f}TB"
     return f"{value_gb}GB"
 
+def get_disk_info():
+    total = 0
+    used = 0
+
+    for d in psutil.disk_partitions(all=True): 
+        if 'devfs' in d.opts or 'autofs' in d.opts: 
+            continue
+        try:
+            usage = psutil.disk_usage(d.mountpoint)
+            total += usage.total
+            used += usage.used
+        except PermissionError:
+            continue
+
+    total_gb = total // (1024**3)
+    used_gb = used // (1024**3)
+    root_usage = psutil.disk_usage('/').percent
+
+    return total_gb, used_gb, root_usage
+
 
 def get_system_info(cpu_name,gpu_name, log_file):
     try:
@@ -30,10 +50,7 @@ def get_system_info(cpu_name,gpu_name, log_file):
         ram_usage = ram.percent
 
         # Get Disk info
-        disks = psutil.disk_partitions()
-        disk_total = sum(psutil.disk_usage(d.mountpoint).total for d in disks) // (1024**3)  # GB
-        disk_used = sum(psutil.disk_usage(d.mountpoint).used for d in disks) // (1024**3)  # GB
-        disk_usage = psutil.disk_usage('/').percent
+        disk_total, disk_used, disk_usage = get_disk_info()
 
         # Get GPU info
         gpu_usage = 0
@@ -60,16 +77,22 @@ def get_system_info(cpu_name,gpu_name, log_file):
             pass
 
         # Format values
-       
         cpu_info = cpu_name  + " " + f"{cpu_count}c/{cpu_threads}t"
         ram_info = f"{format_storage(ram_used)} / {format_storage(ram_total)}"
         disk_info = f"{format_storage(disk_used)} / {format_storage(disk_total)}"
+        battery_left = None
+        is_charging = None
+        if(psutil.sensors_battery() != None):
+            battery_left = psutil.sensors_battery().percent
+            is_charging = psutil.sensors_battery().power_plugged
 
         return {
             "cpuUsage": cpu_usage,
             "gpuUsage": gpu_usage,
             "ramUsage": ram_usage,
-            "diskTotal": disk_usage,
+            "diskUsage": disk_usage,
+            "battery": battery_left,
+            "isCharging": is_charging,
             "os": platform.platform(),
             "cpu": cpu_info,
             "gpu": gpu_name,
