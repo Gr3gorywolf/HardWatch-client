@@ -61,7 +61,7 @@ jobs:
                   dir_name=$(basename "$dir")
                   cd "$dir"
                   zip -r "../../zipped_artifacts/$dir_name.zip" *
-                  cd -  # Volver al directorio anterior
+                  cd - 
                 fi
               done
       - uses: ncipollo/release-action@v1
