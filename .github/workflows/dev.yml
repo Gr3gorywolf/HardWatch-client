@@ -40,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: multi-devices-monitor-client-${{ runner.os }}-${{ matrix.arch }}
+          name: HardWatch-${{ runner.os }}-${{ matrix.arch }}
           path: dist/
 
   release:

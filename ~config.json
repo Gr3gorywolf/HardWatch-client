@@ -3,6 +3,7 @@
     "appKey":"<Server app key>",
     "backendUrl":"<Server URL>",
     "type":"<Device type (desktop | laptop | handheld | server)>",
+    "enable-discord-rpc":false,
     "actionables":[
         {
             "name":"<Actionable name>",

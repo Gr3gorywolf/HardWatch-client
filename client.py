@@ -27,6 +27,7 @@ APP_KEY = config["appKey"]
 DEVICE_NAME = config["name"]
 BACKEND_URL = config["backendUrl"]
 ACTIONABLES = config["actionables"]
+ENABLE_DISCORD_RPC = config.get("enable-discord-rpc", False)
 DEVICE_TYPE = config.get("type", "desktop")
 # Get CPU and GPU info
 cpu_info = get_cpu_info()
@@ -84,8 +85,8 @@ start_socket_client(APP_KEY, DEVICE_ID, BACKEND_URL, ACTIONABLES)
 # Run threads
 thread = threading.Thread(target=send_stats, name="send_stats", daemon=True)
 thread.start()
-
-init_presence(DEVICE_NAME,DEVICE_TYPE, CPU_NAME, GPU_NAME)
+if(ENABLE_DISCORD_RPC):
+    init_presence(DEVICE_NAME,DEVICE_TYPE, CPU_NAME, GPU_NAME)
 
 if(icon != None):
     icon.run()
