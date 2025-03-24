@@ -12,6 +12,7 @@ import platform
 from cpuinfo import get_cpu_info
 
 from utils import get_device_uuid, get_gpu_name, get_system_info, start_socket_client
+from utils.discord_presence import init_presence
 
 
 multiprocessing.freeze_support()
@@ -26,6 +27,7 @@ APP_KEY = config["appKey"]
 DEVICE_NAME = config["name"]
 BACKEND_URL = config["backendUrl"]
 ACTIONABLES = config["actionables"]
+DEVICE_TYPE = config["type"]
 # Get CPU and GPU info
 cpu_info = get_cpu_info()
 CPU_NAME = cpu_info.get("brand_raw", "Unknown CPU")
@@ -43,7 +45,7 @@ try:
     from PIL import Image
     icon_image = Image.open("icon.ico")
     menu = Menu(MenuItem("Open dashboard", open_dashboard),MenuItem("Quit", quit_app))
-    icon = Icon("System Monitor", icon_image, menu=menu)
+    icon = Icon("PCSpecTrack", icon_image, menu=menu)
 except:
     icon = None 
     pass
@@ -58,6 +60,7 @@ def send_stats():
                 payload = {
                     "name": DEVICE_NAME,
                     "id": DEVICE_ID,
+                    "type": DEVICE_TYPE,
                     **system_info,
                     "platform": platform.system(),
                     "actionables": ACTIONABLES
@@ -81,6 +84,8 @@ start_socket_client(APP_KEY, DEVICE_ID, BACKEND_URL, ACTIONABLES)
 # Run threads
 thread = threading.Thread(target=send_stats, name="send_stats", daemon=True)
 thread.start()
+
+init_presence(DEVICE_NAME,DEVICE_TYPE, CPU_NAME, GPU_NAME)
 
 if(icon != None):
     icon.run()

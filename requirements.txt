@@ -12,3 +12,4 @@ python-socketio
 socketio
 socketio-client
 websocket-client
+pypresence

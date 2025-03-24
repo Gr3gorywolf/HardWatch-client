@@ -2,6 +2,7 @@
     "name":"<Device alias>",
     "appKey":"<Server app key>",
     "backendUrl":"<Server URL>",
+    "type":"<Device type (desktop | laptop | handheld)>",
     "actionables":[
         {
             "name":"<Actionable name>",
