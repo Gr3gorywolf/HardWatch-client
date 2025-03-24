@@ -15,8 +15,8 @@ def update_presence(device_name="Unknown Device", device_type="desktop", cpu_nam
                 state=f"📊 Usage: CPU {system_info['cpuUsage']}% | GPU {system_info['gpuUsage']}% | RAM {system_info['ramUsage']}% | Disk {system_info['diskUsage']}%"[:128], 
                 details=f"👩🏾‍💻 Specs: Device {device_name[:15]} | CPU {cpu_name[-10:]} | GPU {gpu_name[-17:]} | RAM {system_info['ram'][-20:]} | Disk {system_info['disk'][-20:]}"[:128],
                 large_image=device_type,
-                large_text=f"Using: {device_name}",
-                small_text="System Monitor",
+                large_text=f"Using {device_name}",
+                small_text="System Monitor"
             )
         except Exception as e:
             print(f"Failed to update Discord presence: {e}")

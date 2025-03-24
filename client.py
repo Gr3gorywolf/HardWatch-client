@@ -27,7 +27,7 @@ APP_KEY = config["appKey"]
 DEVICE_NAME = config["name"]
 BACKEND_URL = config["backendUrl"]
 ACTIONABLES = config["actionables"]
-DEVICE_TYPE = config["type"]
+DEVICE_TYPE = config.get("type", "desktop")
 # Get CPU and GPU info
 cpu_info = get_cpu_info()
 CPU_NAME = cpu_info.get("brand_raw", "Unknown CPU")
