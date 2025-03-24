@@ -2,7 +2,7 @@ name: 🚀 Build APP and expose the build as a artifact
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
 
 jobs:
   build:
