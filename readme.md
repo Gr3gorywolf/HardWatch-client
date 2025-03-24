@@ -5,8 +5,10 @@
 
 # HardWatch Client
 
-[![GitHub release downloads](https://img.shields.io/github/downloads/Gr3gorywolf/HardWatch-client/latest/total?label=Total%20Downloads)](https://github.com/Gr3gorywolf/HardWatch-client/releases/latest)
+[![GitHub release downloads](https://img.shields.io/github/downloads/Gr3gorywolf/HardWatch-client/total.svg)](https://github.com/Gr3gorywolf/HardWatch-client/releases/latest)
 [![Pipeline Status](https://img.shields.io/github/actions/workflow/status/Gr3gorywolf/HardWatch-client/main.yml?label=Pipeline%20Status)](https://github.com/Gr3gorywolf/HardWatch-client/actions)
+![GitHub last commit](https://img.shields.io/github/last-commit/Gr3gorywolf/HardWatch-client)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Gr3gorywolf/HardWatch-client?label=latest%20release)
 
 ## Overview
 
