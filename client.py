@@ -46,7 +46,7 @@ try:
     from PIL import Image
     icon_image = Image.open("icon.ico")
     menu = Menu(MenuItem("Open dashboard", open_dashboard),MenuItem("Quit", quit_app))
-    icon = Icon("HardWatch", icon_image, menu=menu, name="HardWatch")
+    icon = Icon("HardWatch",icon=icon_image, menu=menu, title="HardWatch")
 except:
     icon = None 
     pass

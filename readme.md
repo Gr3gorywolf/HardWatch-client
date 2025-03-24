@@ -20,6 +20,7 @@
 - **Server Communication**: Sends performance data to a [HardWatch Server](https://github.com/Gr3gorywolf/HardWatch-server).
 - **Discord Rich Presence Integration**: Displays system usage stats on Discord (configurable).
 - **Remote Command Execution**: Executes predefined commands from the web app or ZeppOS app.
+- **Tray Icon**: Since this doesn't have any user interface and runs in background, It stays running on the tray where you can easily close the program
 
 
 ## Configuration
