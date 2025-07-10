@@ -1,17 +1,22 @@
 import os
 import socketio
 
+from config import ACTIONABLES, BACKEND_URL, APP_KEY, DEVICE_ID
+from tray.notifications import show_notification
+
 
 sio = socketio.Client() 
-def start_socket_client(appKey, deviceId, backendUrl, actionables):
+def start_socket_client():
     ## Socket IO setup
     @sio.event
     def connect():
+        show_notification("HardWatch", "HardWatch Client connected successfully!, See the tray icon for options.")
         print("Connected to server")
 
     @sio.event
     def disconnect():
         print("Disconnected from server")
+        show_notification("HardWatch", "Disconnected from server")
 
     @sio.on("execute-action")
     def handle_action(data):
@@ -20,7 +25,7 @@ def start_socket_client(appKey, deviceId, backendUrl, actionables):
 
         # Buscar la acción en la lista de `actionables`
         action_command = None
-        for item in actionables:
+        for item in ACTIONABLES:
             if item["name"].lower() == action_name.lower():
                 action_command = item["action"]
                 break
@@ -32,7 +37,8 @@ def start_socket_client(appKey, deviceId, backendUrl, actionables):
             print(f"Action '{action_name}' not found in actionables")
 
     try:
-        sio.connect(backendUrl, auth={"appKey": appKey, "id": deviceId})
+        sio.connect(BACKEND_URL, auth={"appKey": APP_KEY, "id": DEVICE_ID})
     except:
         print("Error connecting to socket server")
+        show_notification("HardWatch", "Failed to connect to server")
         pass

@@ -33,7 +33,16 @@ Before running the application, you need to set up a `config.json` file in the r
     "appKey": "<Server app key>",
     "backendUrl": "<Server URL>",
     "type": "<Device type (desktop | laptop | handheld | server)>",
-    "enable-discord-rpc": false,
+    "enableDiscordRPC": false,
+    "includeDockerServices": false,
+    "services":[
+        {
+            "id": "<Service unique identifier>",
+            "name": "<Service name>",
+            "port": "<Service port>",
+            "type": "<web,code,database,file,video,remote-control,ssh,dev-server,other>"
+        }
+    ],
     "actionables": [
         {
             "name": "<Actionable name>",
@@ -51,7 +60,13 @@ Before running the application, you need to set up a `config.json` file in the r
 | `appKey`            | Authentication key for connecting to the HardWatch server. |
 | `backendUrl`        | URL of the HardWatch server. |
 | `type`              | Specifies the type of device: `desktop`, `laptop`, `handheld`, or `server`. |
-| `enable-discord-rpc`| Boolean value (`true` or `false`) to enable or disable Discord Rich Presence integration. |
+| `enableDiscordRPC`| Boolean value (`true` or `false`) to enable or disable Discord Rich Presence integration. |
+| `includeDockerServices`| Boolean value (`true` or `false`) to enable or disable reading services from docker. |
+| `services` | List of manually set services that can be running on this device |
+| `services.id` | Service unique identifier |
+| `services.name` | Service name |
+| `services.port` | Service port |
+| `services.type` | Service type used to displa a custom icon on the frontend, could be: web,code,database,file,video,remote-control,ssh,dev-server,other |
 | `actionables`       | List of commands that can be executed remotely. |
 | `actionables.name`  | The name of the command. |
 | `actionables.action`| The exact command to be executed. |
@@ -64,7 +79,7 @@ Before running the application, you need to set up a `config.json` file in the r
     "appKey": "my-secure-key",
     "backendUrl": "http://localhost:3000",
     "type": "desktop",
-    "enable-discord-rpc": true,
+    "enableDiscordRPC": true,
     "actionables": [
         {
             "name": "Restart Explorer",

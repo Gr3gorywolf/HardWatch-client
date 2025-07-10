@@ -1,1 +1,1 @@
-from .rpc import init_presence
+from .rpc import init_discord_RPC

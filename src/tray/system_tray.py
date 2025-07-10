@@ -1,6 +1,9 @@
 
 import webbrowser
 
+from config import BACKEND_URL, DEVICE_ID
+from tray.notifications import show_notification
+
 
 SystemTray = None
 def quit_app(icon, item):
@@ -16,7 +19,7 @@ try:
     menu = Menu(MenuItem("Open dashboard", open_dashboard),MenuItem("Quit", quit_app))
     SystemTray = Icon("HardWatch",icon=icon_image, menu=menu, title="HardWatch")
 except:
-    SystemTray = None 
+    SystemTray = None
     pass
 
 def init_tray():

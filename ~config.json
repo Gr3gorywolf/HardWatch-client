@@ -3,7 +3,16 @@
     "appKey":"<Server app key>",
     "backendUrl":"<Server URL>",
     "type":"<Device type (desktop | laptop | handheld | server)>",
-    "enable-discord-rpc":false,
+    "enableDiscordRPC":false,
+    "includeDockerServices": true,
+    "services":[
+        {
+            "id": "dev-srv-2",
+            "name": "Dev Server",
+            "port": "3000",
+            "type": "code"
+        }
+    ],
     "actionables":[
         {
             "name":"<Actionable name>",

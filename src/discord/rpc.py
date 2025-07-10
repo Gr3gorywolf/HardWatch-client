@@ -2,6 +2,7 @@ import threading
 import time
 import pypresence
 from monitor.collector import get_system_info
+from config import DEVICE_NAME, DEVICE_TYPE, CPU_NAME, GPU_NAME
 
 CLIENT_ID = "1353474060364812308"
 rpc = pypresence.Presence(CLIENT_ID)
@@ -25,7 +26,7 @@ def update_presence(device_name="Unknown Device", device_type="desktop", cpu_nam
 
         time.sleep(5)
 
-def init_presence(device_name="Unknown Device", device_type = "desktop" , cpu_name="Unknown CPU", gpu_name="Unknown GPU"):
+def init_discord_RPC():
     global discord_thread
     while True:
         try:
@@ -33,7 +34,7 @@ def init_presence(device_name="Unknown Device", device_type = "desktop" , cpu_na
             rpc.connect()
             print("Connected to Discord RPC successfully.")
 
-            discord_thread = threading.Thread(target=update_presence, args=(device_name,device_type , cpu_name, gpu_name), daemon=True)
+            discord_thread = threading.Thread(target=update_presence, args=(DEVICE_NAME,DEVICE_TYPE , CPU_NAME, GPU_NAME), daemon=True)
             discord_thread.start()
             break
         except Exception as e:

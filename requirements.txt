@@ -14,3 +14,4 @@ socketio-client
 websocket-client
 pypresence
 docker
+notify-py

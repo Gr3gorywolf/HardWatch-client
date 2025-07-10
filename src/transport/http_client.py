@@ -4,13 +4,7 @@ import time
 import requests
 from monitor.collector import get_gpu_name, get_system_info, get_device_uuid
 from monitor.running_services import check_service_status, parse_services, get_docker_services
-from config import USE_DOCKER_SERVICES, DEVICE_NAME, DEVICE_TYPE, APP_KEY, BACKEND_URL, ACTIONABLES, SERVICES, ERROR_LOG
-from cpuinfo import get_cpu_info
-
-cpu_info = get_cpu_info()
-CPU_NAME = cpu_info.get("brand_raw", "Unknown CPU")
-GPU_NAME = get_gpu_name()
-DEVICE_ID = get_device_uuid() or hashlib.sha1((DEVICE_NAME + CPU_NAME).encode()).hexdigest()
+from config import USE_DOCKER_SERVICES, DEVICE_NAME, DEVICE_TYPE, APP_KEY, BACKEND_URL, ACTIONABLES, SERVICES, ERROR_LOG, CPU_NAME, GPU_NAME, DEVICE_ID
 headers = {"appKey": APP_KEY}
 
 def send_device_info():
