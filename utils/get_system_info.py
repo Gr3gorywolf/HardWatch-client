@@ -7,7 +7,7 @@ try:
     NVIDIA_AVAILABLE = True
 except :
     NVIDIA_AVAILABLE = False
-    print("NVML no disponible en este entorno")
+    print("No nvidia GPU found.")
 
 def format_storage(value_gb):
     """Format storage values, converting to TB if >= 1000GB"""

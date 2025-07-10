@@ -13,3 +13,4 @@ socketio
 socketio-client
 websocket-client
 pypresence
+docker

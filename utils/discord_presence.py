@@ -8,6 +8,7 @@ rpc = pypresence.Presence(CLIENT_ID)
 discord_thread = None
 
 def update_presence(device_name="Unknown Device", device_type="desktop", cpu_name="Unknown CPU", gpu_name="Unknown GPU"):
+    start_timestamp = int(time.time())
     while True:
         try:
             system_info = get_system_info(cpu_name, gpu_name, "errors-log.txt")
@@ -16,7 +17,8 @@ def update_presence(device_name="Unknown Device", device_type="desktop", cpu_nam
                 details=f"👩🏾‍💻 Specs: Device {device_name[:15]} | CPU {cpu_name[-10:]} | GPU {gpu_name[-17:]} | RAM {system_info['ram'][-20:]} | Disk {system_info['disk'][-20:]}"[:128],
                 large_image=device_type,
                 large_text=f"Using {device_name}",
-                small_text="System Monitor"
+                small_text="System Monitor",
+                start=start_timestamp,
             )
         except Exception as e:
             print(f"Failed to update Discord presence: {e}")
