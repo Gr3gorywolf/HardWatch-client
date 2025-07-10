@@ -1,7 +1,7 @@
 import threading
 import time
 import pypresence
-from utils import get_system_info
+from monitor.collector import get_system_info
 
 CLIENT_ID = "1353474060364812308"
 rpc = pypresence.Presence(CLIENT_ID)

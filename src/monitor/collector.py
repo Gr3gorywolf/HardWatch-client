@@ -1,6 +1,12 @@
+import subprocess
+import platform
+import sys
+from utils.formatters import format_storage
+from utils.system import runCommand
 import platform
 import time
 import psutil
+
 try:
     from pynvml import nvmlInit, nvmlShutdown, nvmlDeviceGetHandleByIndex, nvmlDeviceGetUtilizationRates, nvmlDeviceGetTemperature, NVML_TEMPERATURE_GPU, nvmlDeviceGetName
     nvmlInit()
@@ -9,12 +15,52 @@ except :
     NVIDIA_AVAILABLE = False
     print("No nvidia GPU found.")
 
-def format_storage(value_gb):
-    """Format storage values, converting to TB if >= 1000GB"""
-    if value_gb >= 1000:
-        return f"{value_gb / 1000:.1f}TB"
-    return f"{value_gb}GB"
 
+def get_device_uuid():
+  if sys.platform == 'darwin':
+    return runCommand(
+      "ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'",
+    )
+
+  if sys.platform == 'win32' or sys.platform == 'cygwin' or sys.platform == 'msys':
+    return runCommand('wmic csproduct get uuid').split('\n')[2] \
+                                         .strip()
+
+  if sys.platform.startswith('linux'):
+    return runCommand('cat /var/lib/dbus/machine-id') or \
+           runCommand('cat /etc/machine-id')
+
+  if sys.platform.startswith('openbsd') or sys.platform.startswith('freebsd'):
+    return runCommand('cat /etc/hostid') or \
+           runCommand('kenv -q smbios.system.uuid')
+
+def get_gpu_name():
+    try:
+        os_type = platform.system()
+        if os_type == "Linux":
+                output = subprocess.check_output(["lspci"], text=True, stderr=subprocess.STDOUT)
+                vga_lines = [line for line in output.splitlines() if "vga" in line.lower()]
+                gpu_name = vga_lines[0].split(":")[2].strip()  
+                return gpu_name
+
+        elif os_type == "Darwin":
+                gpu_info = subprocess.check_output(["system_profiler", "SPDisplaysDataType"], stderr=subprocess.STDOUT)
+                gpu_name = gpu_info.decode().split("Chipset Model:")[1].split("\n")[0].strip()
+                return gpu_name
+
+        elif os_type == "Windows":
+                gpu_info = subprocess.check_output(
+                    ["powershell", "-Command", "Get-WmiObject Win32_VideoController | Select-Object -ExpandProperty Caption"],
+                    stderr=subprocess.STDOUT
+                ).decode().strip()
+                return gpu_info
+
+        else:
+            return "Unknown GPU"
+    except:
+        return "Unknown GPU"
+
+ 
 def get_disk_info():
     total = 0
     used = 0

@@ -2,8 +2,8 @@
 
 
 a = Analysis(
-    ['client.py'],
-    pathex=[],
+    ['src/client.py'],
+    pathex=[os.path.abspath("src")],
     binaries=[],
     datas=[],
     hiddenimports=['socketio', 'engineio'],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='client',
+    name='HardWatch',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

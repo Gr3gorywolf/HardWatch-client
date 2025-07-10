@@ -1,7 +1,7 @@
 import docker
-import socket
 import requests
-import threading
+
+from utils.network import get_host_ip, sendPing
 
 STATUS_RUNNING = "running"
 STATUS_WARNING = "warning"
@@ -11,11 +11,7 @@ TIMEOUT_MS = 0.2
 
 client = docker.from_env()
 
-def get_host_ip():
-    try:
-        return socket.gethostbyname(socket.gethostname())
-    except:
-        return "127.0.0.1"
+
 
 host_ip = get_host_ip()
 
@@ -121,16 +117,8 @@ def parse_services(services):
                 "url": url,
             })
     return parsed_services
-def sendPing(host,port,timeout=2):
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) #presumably 
-    sock.settimeout(timeout)
-    try:
-        sock.connect((host,port))
-    except:
-        return False
-    else:
-        sock.close()
-        return True
+
+
 
 def check_service_status(service):
     url = service.get("url")
