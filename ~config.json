@@ -5,6 +5,7 @@
     "type":"<Device type (desktop | laptop | handheld | server)>",
     "enableDiscordRPC":false,
     "includeDockerServices": true,
+    "disableNotifications": false,
     "services":[
         {
             "id": "dev-srv-2",

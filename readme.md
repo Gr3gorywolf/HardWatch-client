@@ -35,6 +35,7 @@ Before running the application, you need to set up a `config.json` file in the r
     "type": "<Device type (desktop | laptop | handheld | server)>",
     "enableDiscordRPC": false,
     "includeDockerServices": false,
+    "disableNotifications:":false,
     "services":[
         {
             "id": "<Service unique identifier>",
@@ -62,6 +63,7 @@ Before running the application, you need to set up a `config.json` file in the r
 | `type`              | Specifies the type of device: `desktop`, `laptop`, `handheld`, or `server`. |
 | `enableDiscordRPC`| Boolean value (`true` or `false`) to enable or disable Discord Rich Presence integration. |
 | `includeDockerServices`| Boolean value (`true` or `false`) to enable or disable reading services from docker. |
+| `disableNotifications`| Disables native notifications |
 | `services` | List of manually set services that can be running on this device |
 | `services.id` | Service unique identifier |
 | `services.name` | Service name |
