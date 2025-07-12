@@ -18,7 +18,8 @@ queue = None
 if sys.platform == 'darwin':
     ctx = multiprocessing.get_context('spawn')
     Process = ctx.Process
-    queue = ctx.Queue
+    manager = ctx.Manager()
+    queue = manager.Queue()
 else:
     Process = multiprocessing.Process
     queue = multiprocessing.Queue()
