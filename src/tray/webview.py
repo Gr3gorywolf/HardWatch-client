@@ -11,18 +11,9 @@ from monitor.scheduler import start_schedulers, stop_schedulers
 from transport.websocket_client import start_socket_client, stop_socket_client
 from tray.notifications import show_notification
 from utils.js_api import JsApi
-ctx = None
-Process = None
-queue = None
 
-if sys.platform == 'darwin':
-    ctx = multiprocessing.get_context('spawn')
-    Process = ctx.Process
-    manager = ctx.Manager()
-    queue = manager.Queue()
-else:
-    Process = multiprocessing.Process
-    queue = multiprocessing.Queue()
+Process = multiprocessing.Process
+queue = multiprocessing.Queue()
 
 HTML_PATH = os.path.abspath("web/config/index.html")
 
@@ -65,11 +56,11 @@ def show_config_setup(initial_conf, q):
     webview.start()
 
 
-config_proc: multiprocessing.Process | None = None
+config_proc: multiprocessing.Process = None
 
 
 def open_config_setup():
-    global config_proc, queue, ctx, Process
+    global config_proc, queue, Process
     if config_proc is None or not config_proc.is_alive():
         config_proc = Process(
             target=show_config_setup,
