@@ -102,8 +102,22 @@ createApp({
             e.target.value = '';
         }
 
+        function scrollToFirstError() {
+            setTimeout(() => {
+                const element = document.querySelector('.error-msg');
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        element.focus();
+                    }
+            }, 300);
+        }
+
         function downloadJSON() {
-            if (!validateAll()) return alert('There are validation errors. Please fix them before saving.');
+            if (!validateAll()) {
+                alert('There are validation errors. Please fix them before saving.')
+                scrollToFirstError()
+                return
+            };
             const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
             const downloadAnchor = document.createElement('a');
             downloadAnchor.href = URL.createObjectURL(blob);
@@ -113,7 +127,11 @@ createApp({
         }
 
         function handleSave() {
-            if (!validateAll()) return alert('There are validation errors. Please fix them before saving.');
+            if (!validateAll()) {
+                alert('There are validation errors. Please fix them before saving.')
+                scrollToFirstError()
+                return
+            };
             loading.value = true;
             window.pywebview.api.saveData(config)
                 .then(() => {

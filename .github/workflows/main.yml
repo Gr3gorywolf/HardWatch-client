@@ -68,3 +68,27 @@ jobs:
         with:
             artifacts: "zipped_artifacts/*.zip"
             tag: v1.0.0-${{ github.run_number }}
+
+  deploy-pages:
+    needs: release
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Move icon.ico to web/
+        run: |
+          mkdir -p web
+          if [ -f icon.ico ]; then
+            mv icon.ico web/
+          fi
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
