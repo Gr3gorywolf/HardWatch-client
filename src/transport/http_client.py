@@ -4,37 +4,37 @@ import time
 import requests
 from monitor.collector import get_gpu_name, get_system_info, get_device_uuid
 from monitor.running_services import check_service_status, parse_services, get_docker_services
-from config import USE_DOCKER_SERVICES, DEVICE_NAME, DEVICE_TYPE, APP_KEY, BACKEND_URL, ACTIONABLES, SERVICES, ERROR_LOG, CPU_NAME, GPU_NAME, DEVICE_ID
-headers = {"appKey": APP_KEY}
+import config
+headers = {"appKey": config.APP_KEY}
 
 def send_device_info():
-    system_info = get_system_info(CPU_NAME, GPU_NAME, ERROR_LOG)
-    parsed_services = parse_services(SERVICES)
+    system_info = get_system_info(config.CPU_NAME, config.GPU_NAME, config.ERROR_LOG)
+    parsed_services = parse_services(config.SERVICES)
     docker_services = get_docker_services()
     all_services = []
-    for service in docker_services + parsed_services if USE_DOCKER_SERVICES else parsed_services:
+    for service in docker_services + parsed_services if config.USE_DOCKER_SERVICES else parsed_services:
         status = check_service_status(service)
         all_services.append(status)
 
     if system_info:
         payload = {
-            "name": DEVICE_NAME,
-            "id": DEVICE_ID,
-            "type": DEVICE_TYPE,
+            "name": config.DEVICE_NAME,
+            "id": config.DEVICE_ID,
+            "type": config.DEVICE_TYPE,
             **system_info,
             "platform": platform.system(),
-            "actionables": ACTIONABLES,
+            "actionables": config.ACTIONABLES,
             "services": all_services,
         }
         print("Sending device info...")
-        response = requests.post(f"{BACKEND_URL}/api/devices/send-stats-data", json=payload, headers=headers)
-        return {"response": response, "payload": payload}
+        response = requests.post(f"{config.BACKEND_URL}/api/devices/send-stats-data", json=payload, headers=headers)
+        return response
 
 def send_usages():
-            system_info = get_system_info(CPU_NAME, GPU_NAME, ERROR_LOG)
+            system_info = get_system_info(config.CPU_NAME, config.GPU_NAME, config.ERROR_LOG)
             if system_info:
                 payload = {
-                    "id": DEVICE_ID,
+                    "id": config.DEVICE_ID,
                     "battery": system_info.get("battery"),
                     "cpuUsage": system_info.get("cpuUsage"),
                     "diskUsage": system_info.get("diskUsage"),
@@ -47,7 +47,7 @@ def send_usages():
                     "gpuTemp": system_info.get("gpuTemp"),
                 }
                 print("Sending usage data...")
-                response = requests.post(f"{BACKEND_URL}/api/devices/send-device-usage", json=payload, headers=headers)
+                response = requests.post(f"{config.BACKEND_URL}/api/devices/send-device-usage", json=payload, headers=headers)
                 if response.status_code == 404:
                     print("Resending device info...")
                     send_device_info()

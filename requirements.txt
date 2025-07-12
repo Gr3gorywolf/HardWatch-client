@@ -15,3 +15,4 @@ websocket-client
 pypresence
 docker
 notify-py
+pywebview

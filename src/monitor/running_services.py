@@ -9,8 +9,7 @@ STATUS_ERROR = "error"
 STATUS_STOPPED = "stopped"
 TIMEOUT_MS = 0.2
 
-client = docker.from_env()
-
+client = None 
 
 
 host_ip = get_host_ip()
@@ -78,6 +77,13 @@ def generate_url(ip, port, type_):
 
 
 def get_docker_services():
+    global client
+    if client is None:
+        try:
+            client = docker.from_env()
+        except Exception:
+            print("Docker client not available.")
+            return []
     services = []
     counter = 1
     for container in client.containers.list():

@@ -1,7 +1,7 @@
 from notifypy import Notify
-from config import DISABLE_NOTIFICATIONS
+import config
 def show_notification(title, message):
-    if(DISABLE_NOTIFICATIONS):
+    if(config.DISABLE_NOTIFICATIONS):
         return
     notification = Notify(
         default_notification_application_name="HardWatch",
