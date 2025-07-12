@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Device Configuration Editor</title>
+  <meta name="description" content="Configure your device settings, services and actionable commands" />
+  <meta name="theme-color" content="#212121" />
+  <meta name="author" content="gr3gorywolf" />
+  <link rel="icon" href="../../icon.ico" />
+
+  <!-- Tailwind desde CDN -->
+  <style>
+    .text-green-custom {
+      color: #4caf50;
+    }
+
+    .bg-dark {
+      background-color: #212121;
+    }
+
+    .bg-card {
+      background-color: #2a2a2a;
+    }
+
+    .bg-input {
+      background-color: #333333 !important;
+    }
+
+    .bg-service {
+      background-color: #333333;
+    }
+
+    .border-input {
+      border-color: #444444;
+    }
+
+    .ring-green-custom:focus {
+      border: solid 1px #4caf50 !important;
+      outline:none !important;
+      box-shadow: none !important;
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+    }
+
+    .border-green-custom {
+      border-color: #4caf50 !important;
+    }
+
+    .hover-bg-green-custom:hover {
+      background-color: #4caf50;
+    }
+
+    .hover-text-white:hover {
+      color: #ffffff;
+    }
+
+    .text-error {
+      color: #ef4444;
+    }
+
+    /* red-500 */
+    .bg-error-hover:hover {
+      background-color: rgba(239, 68, 68, 0.2);
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+
+  <!-- Lucide (iconos SVG) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Vue 3 (build global) -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <!-- ValidatorJS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/validatorjs@3.22.1/dist/validator.min.js"></script>
+</head>
+
+<body class="min-h-screen bg-[#212121] text-white">
+  <!-- Componente raíz -->
+  <div id="app" class="min-h-screen">
+    <main class="container mx-auto p-4">
+      <input type="file" accept=".json" ref="fileInput" class="hidden" @change="loadFile" />
+
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-card rounded-xl shadow-md p-6">
+          <div class="mb-6 border-b border-input pb-4">
+            <h2 class="flex items-center text-2xl font-semibold gap-2">
+              <i data-lucide="file-text" class="text-green-custom w-6 h-6"></i>
+              Device Configuration
+            </h2>
+            <p class="text-gray-400 mt-1">Configure your device settings, services and actionable commands</p>
+          </div>
+
+          <form @submit.prevent="handleSave" class="space-y-8">
+            <!-- Basic Config -->
+            <section class="space-y-4">
+              <h3 class="section-title">Basic Configuration</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Device Name -->
+                <div>
+                  <label class="form-label">Device Name *</label>
+                  <input type="text" v-model.trim="config.name" @blur="validateField('name')" :class="inputCls('name')"
+                    placeholder="My Device" />
+                  <p v-if="errors.name" class="error-msg">{{ errors.name[0] }}</p>
+                </div>
+                <!-- Device Type -->
+                <div>
+                  <label class="form-label">Device Type *</label>
+                  <select v-model="config.type" @blur="validateField('type')" :class="inputCls('type')">
+                    <option v-for="t in deviceTypes" :key="t" :value="t">{{ t }}</option>
+                  </select>
+                  <p v-if="errors.type" class="error-msg">{{ errors.type[0] }}</p>
+                </div>
+                <!-- App Key -->
+                <div>
+                  <label class="form-label">App Key *</label>
+                  <input type="text" v-model.trim="config.appKey" @blur="validateField('appKey')"
+                    :class="inputCls('appKey')" placeholder="your-app-key" />
+                  <p v-if="errors.appKey" class="error-msg">{{ errors.appKey[0] }}</p>
+                </div>
+                <!-- Backend URL -->
+                <div>
+                  <label class="form-label">Backend URL *</label>
+                  <input type="url" v-model.trim="config.backendUrl" @blur="validateField('backendUrl')"
+                    :class="inputCls('backendUrl')" placeholder="https://your-server.com" />
+                  <p v-if="errors.backendUrl" class="error-msg">{{ errors.backendUrl[0] }}</p>
+                </div>
+              </div>
+
+              <!-- Toggles -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label class="inline-flex items-center gap-2"><input type="checkbox" v-model="config.enableDiscordRPC"
+                    class="toggle" /> Enable Discord RPC</label>
+                <label class="inline-flex items-center gap-2"><input type="checkbox"
+                    v-model="config.includeDockerServices" class="toggle" /> Include Docker Services</label>
+                <label class="inline-flex items-center gap-2"><input type="checkbox"
+                    v-model="config.disableNotifications" class="toggle" /> Disable Notifications</label>
+              </div>
+            </section>
+
+            <!-- Services -->
+            <section class="space-y-4">
+              <div class="flex justify-between items-center">
+                <h3 class="section-title">Services</h3>
+                <button type="button" class="btn-outline" @click="addService"><i data-lucide="plus"
+                    class="w-4 h-4 mr-2"></i>Add Service</button>
+              </div>
+              <template v-if="config.services.length">
+                <div v-for="(srv,i) in config.services" :key="i" class="p-4 bg-service rounded-md space-y-3">
+                  <div class="flex justify-between items-center">
+                    <h4 class="font-medium">Service {{ i+1 }}</h4>
+                    <button type="button" @click="removeService(i)" class="text-red-500 hover:text-red-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-trash-icon lucide-trash">
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                        <path d="M3 6h18" />
+                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div><label class="form-label">Name *</label><input type="text" v-model.trim="srv.name"
+                        @blur="validateField(`services.${i}.name`)" :class="inputCls(`services.${i}.name`)" />
+                      <p v-if="errors[`services.${i}.name`]" class="error-msg">{{ errors[`services.${i}.name`][0] }}</p>
+                    </div>
+                    <div><label class="form-label">Port *</label><input type="number" min="1" max="65535"
+                        v-model.number="srv.port" @blur="validateField(`services.${i}.port`)"
+                        :class="inputCls(`services.${i}.port`)" />
+                      <p v-if="errors[`services.${i}.port`]" class="error-msg">{{ errors[`services.${i}.port`][0] }}</p>
+                    </div>
+                    <div><label class="form-label">Type *</label><select v-model="srv.type"
+                        @blur="validateField(`services.${i}.type`)" :class="inputCls(`services.${i}.type`)">
+                        <option v-for="t in serviceTypes" :key="t">{{ t }}</option>
+                      </select>
+                      <p v-if="errors[`services.${i}.type`]" class="error-msg">{{ errors[`services.${i}.type`][0] }}</p>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <p v-else class="text-center text-gray-400 py-6">No services configured. Click “Add Service” to get
+                started.</p>
+            </section>
+            <section class="space-y-4">
+              <div class="flex justify-between items-center">
+                <h3 class="section-title">Actionable Commands</h3>
+                <button type="button" class="btn-outline" @click="addActionable"><i data-lucide="plus"
+                    class="w-4 h-4 mr-2"></i>Add Command</button>
+              </div>
+              <template v-if="config.actionables.length">
+                <div v-for="(act,i) in config.actionables" :key="i" class="p-4 bg-service rounded-md space-y-3">
+                  <div class="flex justify-between items-center">
+                    <h4 class="font-medium">Command {{ i+1 }}</h4>
+                    <button type="button" @click="removeActionable(i)" class="text-red-500 hover:text-red-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-trash-icon lucide-trash">
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                        <path d="M3 6h18" />
+                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                    </button>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div><label class="form-label">Command Name *</label><input type="text" v-model.trim="act.name"
+                        @blur="validateField(`actionables.${i}.name`)" :class="inputCls(`actionables.${i}.name`)" />
+                      <p v-if="errors[`actionables.${i}.name`]" class="error-msg">
+                        {{ errors[`actionables.${i}.name`][0] }}</p>
+                    </div>
+                    <div><label class="form-label">Command *</label><input type="text" v-model.trim="act.action"
+                        @blur="validateField(`actionables.${i}.action`)" :class="inputCls(`actionables.${i}.action`)" />
+                      <p v-if="errors[`actionables.${i}.action`]" class="error-msg">
+                        {{ errors[`actionables.${i}.action`][0] }}</p>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <p v-else class="text-center text-gray-400 py-6">No actionable commands configured. Click “Add Command” to
+                get started.</p>
+            </section>
+            <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-input">
+              <template v-if="!hasApi">
+                <button type="button" class="btn-outline" @click="$refs.fileInput.click()"><i
+                    data-lucide="upload" class="w-4 h-4 mr-2"></i>Load JSON</button>
+                <button type="button" class="btn-outline" @click="downloadJSON"><i
+                    data-lucide="download" class="w-4 h-4 mr-2"></i>Download JSON</button>
+              </template>
+              <button v-if="hasApi" type="submit" class="btn-solid" :disabled="loading">
+                <svg v-if="loading"
+                  class="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                    fill="none" />
+                  <path class="opacity-75" d="M4 12a8 8 0 018-8" fill="currentColor" /></svg>Save Configuration</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="index.js"></script>
+  <!-- Components -->
+  <style>
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      /* text-sm */
+      font-weight: 500;
+      /* font-medium */
+      color: #d1d5db;
+      /* text-gray-300 */
+      margin-bottom: 0.25rem;
+      /* mb-1 */
+    }
+
+    .error-msg {
+      color: #ef4444;
+      /* text-red-500 */
+      font-size: 0.875rem;
+      /* text-sm */
+      margin-top: 0.25rem;
+      /* mt-1 */
+    }
+
+    .toggle {
+      height: 1rem;
+      /* h-4 */
+      width: 1rem;
+      /* w-4 */
+      color: #4caf50;
+      /* text-[#4caf50] */
+      border: 1px solid #d1d5db;
+      /* border-gray-300 */
+      border-radius: 0.25rem;
+      /* rounded */
+    }
+
+    .toggle:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #4caf50;
+    }
+
+    .btn-outline {
+      padding: 0.5rem 1rem;
+      /* px-4 py-2 */
+      border: 1px solid #4caf50;
+      border-radius: 0.375rem;
+      /* rounded-md */
+      color: #4caf50;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(76, 175, 80, 0.2);
+      color: white;
+    }
+
+    .btn-solid {
+      padding: 0.5rem 1rem;
+      /* px-4 py-2 */
+      border-radius: 0.375rem;
+      background-color: #4caf50;
+      color: white;
+      font-weight: 500;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .btn-solid:hover {
+      background-color: #43a047;
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+      /* text-lg */
+      font-weight: 600;
+      /* font-semibold */
+      color: #4caf50;
+    }
+  </style>
+</body>
+
+</html>
