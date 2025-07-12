@@ -1,6 +1,5 @@
 import hashlib
-import json
-from cpuinfo import get_cpu_info
+import json 
 from monitor.collector import get_device_uuid, get_gpu_name
 
 CONFIG_FILE = "config.json"
@@ -15,8 +14,8 @@ DISABLE_NOTIFICATIONS = False
 ENABLE_DISCORD_RPC = False
 DEVICE_TYPE = "desktop"
 USE_DOCKER_SERVICES = False
-CPU_NAME = get_cpu_info().get("brand_raw", "Unknown CPU")
-GPU_NAME = get_gpu_name()
+CPU_NAME = "Unknown CPU"
+GPU_NAME = "Unknown GPU"
 DEVICE_ID = (
     get_device_uuid() or hashlib.sha1((DEVICE_NAME + CPU_NAME).encode()).hexdigest()
 )

@@ -11,8 +11,6 @@ from monitor.scheduler import start_schedulers, stop_schedulers
 from transport.websocket_client import start_socket_client, stop_socket_client
 from tray.notifications import show_notification
 from utils.js_api import JsApi
-multiprocessing.freeze_support()
-
 ctx = None
 Process = None
 queue = None
@@ -56,21 +54,21 @@ threading.Thread(target=queue_listener, args=(queue,), daemon=True).start()
 def show_config_setup(initial_conf, q):
     api = JsApi(json_data=initial_conf, on_save=lambda data: q.put(data))
     webview.create_window(
-        "Client configuration",
+        "Device Configuration",
         HTML_PATH,
         width=800,
         height=600,
         js_api=api,
         resizable=False,
     )
-    webview.start(gui="edgechromium")
+    webview.start()
 
 
 config_proc: multiprocessing.Process | None = None
 
 
-def open_config_setup(*_):
-    global config_proc
+def open_config_setup():
+    global config_proc, queue, ctx, Process
     if config_proc is None or not config_proc.is_alive():
         config_proc = Process(
             target=show_config_setup,
