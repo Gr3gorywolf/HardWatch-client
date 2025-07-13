@@ -1,6 +1,6 @@
 import docker
 import requests
-
+import config
 from utils.network import get_host_ip, sendPing
 
 STATUS_RUNNING = "running"
@@ -12,7 +12,7 @@ TIMEOUT_MS = 0.2
 client = None 
 
 
-host_ip = get_host_ip()
+host_ip = config.CUSTOM_IP  if config.CUSTOM_IP is not None else  get_host_ip()
 
 def infer_type(name, port):
     name = name.lower()

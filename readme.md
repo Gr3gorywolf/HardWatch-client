@@ -36,6 +36,7 @@ Before running the application, you need to set up a `config.json` file in the r
     "enableDiscordRPC": false,
     "includeDockerServices": false,
     "disableNotifications:":false,
+    "customIp":"<Leave in blank if want to use device's local ip>",
     "services":[
         {
             "id": "<Service unique identifier>",
@@ -64,6 +65,7 @@ Before running the application, you need to set up a `config.json` file in the r
 | `enableDiscordRPC`| Boolean value (`true` or `false`) to enable or disable Discord Rich Presence integration. |
 | `includeDockerServices`| Boolean value (`true` or `false`) to enable or disable reading services from docker. |
 | `disableNotifications`| Disables native notifications |
+| `customIp`| Set device's custom ip to show on services instead of device's local ip |
 | `services` | List of manually set services that can be running on this device |
 | `services.id` | Service unique identifier |
 | `services.name` | Service name |

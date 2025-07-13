@@ -5,9 +5,9 @@ import time
 from cpuinfo import get_cpu_info
 from monitor.collector import get_gpu_name
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-from monitor.scheduler import start_schedulers, stop_schedulers
+from monitor.scheduler import start_schedulers
 import config
-from transport.websocket_client import start_socket_client, stop_socket_client
+from transport.websocket_client import start_socket_client
 from discord.rpc import init_discord_RPC
 from tray.system_tray import init_tray
 from notifypy import Notify

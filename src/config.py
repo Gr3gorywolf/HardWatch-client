@@ -16,13 +16,14 @@ DEVICE_TYPE = "desktop"
 USE_DOCKER_SERVICES = False
 CPU_NAME = "Unknown CPU"
 GPU_NAME = "Unknown GPU"
+CUSTOM_IP = None
 DEVICE_ID = (
     get_device_uuid() or hashlib.sha1((DEVICE_NAME + CPU_NAME).encode()).hexdigest()
 )
 
 
 def load_config():
-    global CONFIG, APP_KEY, DEVICE_NAME, BACKEND_URL, ACTIONABLES, SERVICES, DISABLE_NOTIFICATIONS, ENABLE_DISCORD_RPC, DEVICE_TYPE, USE_DOCKER_SERVICES
+    global CONFIG, APP_KEY, DEVICE_NAME, BACKEND_URL, ACTIONABLES, SERVICES, DISABLE_NOTIFICATIONS, ENABLE_DISCORD_RPC, DEVICE_TYPE, USE_DOCKER_SERVICES, CUSTOM_IP
     try:
             file_content = open(CONFIG_FILE, "r")
             CONFIG = json.load(file_content)
@@ -41,6 +42,7 @@ def load_config():
     ENABLE_DISCORD_RPC = CONFIG.get("enableDiscordRPC", False)
     DEVICE_TYPE = CONFIG.get("type", "desktop")
     USE_DOCKER_SERVICES = CONFIG.get("includeDockerServices", False)
+    CUSTOM_IP = CONFIG.get("customIp", None)
 
 
 load_config()
