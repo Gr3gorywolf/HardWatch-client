@@ -5,7 +5,7 @@ from monitor.collector import get_system_info
 import config
 
 CLIENT_ID = "1353474060364812308"
-rpc = pypresence.Presence(CLIENT_ID)
+rpc = None
 discord_thread = None
 
 def update_presence(device_name="Unknown Device", device_type="desktop", cpu_name="Unknown CPU", gpu_name="Unknown GPU"):
@@ -27,7 +27,12 @@ def update_presence(device_name="Unknown Device", device_type="desktop", cpu_nam
         time.sleep(5)
 
 def init_discord_RPC():
-    global discord_thread
+    global discord_thread, rpc
+    try:
+        rpc = pypresence.Presence(CLIENT_ID)
+    except Exception as e:
+        print(f"Failed to initialize Discord RPC: {e}")
+        return
     while True:
         try:
             print("Trying to connect to Discord RPC...")
