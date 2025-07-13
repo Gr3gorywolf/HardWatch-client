@@ -4,17 +4,16 @@ import sys
 import threading
 import time
 import webview
-import multiprocessing
+
 
 import config
 from monitor.scheduler import start_schedulers, stop_schedulers
 from transport.websocket_client import start_socket_client, stop_socket_client
 from tray.notifications import show_notification
+import multiprocessing
 from utils.js_api import JsApi
-
-Process = multiprocessing.Process
-queue = multiprocessing.Queue()
-
+Process  = None
+queue = None
 HTML_PATH = os.path.abspath("web/config/index.html")
 
 
@@ -33,15 +32,13 @@ def on_save_main(data: dict):
 
 # Listener en un hilo daemon
 def queue_listener(q):
+    if q is None:
+        return
     while True:
         new_conf = q.get()
         if new_conf is None:
             break
         on_save_main(new_conf)
-
-
-threading.Thread(target=queue_listener, args=(queue,), daemon=True).start()
-
 
 def show_config_setup(initial_conf, q):
     api = JsApi(json_data=initial_conf, on_save=lambda data: q.put(data))
@@ -61,6 +58,12 @@ config_proc: multiprocessing.Process = None
 
 def open_config_setup():
     global config_proc, queue, Process
+    try: 
+        Process = multiprocessing.Process
+        queue = multiprocessing.Queue()
+    except Exception as e:
+        print(f"Error importing multiprocessing: {e}")
+    threading.Thread(target=queue_listener, args=(queue,), daemon=True).start()
     if config_proc is None or not config_proc.is_alive():
         config_proc = Process(
             target=show_config_setup,
