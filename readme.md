@@ -25,7 +25,7 @@
 
 ## Configuration
 
-Before running the application, you need to set up a `config.json` file in the root directory. Below is the required structure:
+Before running the application, you need to set up a `config.json` file in the root directory. Below is the required structure, you can also use the [Web editor](https://gr3gorywolf.github.io/HardWatch-client/config/) to easily create a configuration file:
 
 ```json
 {
@@ -101,9 +101,15 @@ Before running the application, you need to set up a `config.json` file in the r
 
 You can run the HardWatch Client in multiple ways:
 
+### Run the install command
+```sh 
+bash <(curl -s https://raw.githubusercontent.com/Gr3gorywolf/HardWatch-client/main/scripts/release-install.sh)
+```
+
 ### Using Precompiled Binaries
 1. Download the appropriate binary from the [Releases page](https://github.com/Gr3gorywolf/HardWatch-client/releases/latest).
 2. Run the executable for your platform (Windows, macOS, or Linux).
+
 
 ### Running with Docker
 1. Clone the repository:

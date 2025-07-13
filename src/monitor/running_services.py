@@ -7,9 +7,9 @@ STATUS_RUNNING = "running"
 STATUS_WARNING = "warning"
 STATUS_ERROR = "error"
 STATUS_STOPPED = "stopped"
-TIMEOUT_MS = 0.2
+TIMEOUT_MS = 0.5
 
-client = None 
+client = None
 
 
 host_ip = config.CUSTOM_IP  if config.CUSTOM_IP is not None else  get_host_ip()
